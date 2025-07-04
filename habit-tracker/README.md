@@ -75,7 +75,7 @@ To run the app in development mode:
 npm start
 ```
 
-Open [https://habit-tracker-app-lwym.onrender.com:3000](https://habit-tracker-app-lwym.onrender.com:3000) to view it in your browser. The page will reload if you make edits.
+Open [https://localhost:3000](https://localhost:3000) to view it in your browser. The page will reload if you make edits.
 
 ## 💡 Usage
 
