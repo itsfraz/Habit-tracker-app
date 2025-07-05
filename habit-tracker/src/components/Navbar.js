@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import authService from '../services/authService';
 
 const Navbar = ({ currentUser, logOut }) => {
   return (
