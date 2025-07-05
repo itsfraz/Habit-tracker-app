@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import HabitList from './components/HabitList';
@@ -13,6 +13,8 @@ import HabitSuggestions from './components/HabitSuggestions';
 import DataManagement from './components/DataManagement';
 import Login from './components/Login';
 import Register from './components/Register';
+import Navbar from './components/Navbar';
+import HomePage from './components/HomePage';
 import authService from './services/authService';
 import habitService from './services/habitService';
 
@@ -22,6 +24,7 @@ const PrivateRoute = ({ children }) => {
 };
 
 const App = () => {
+  const navigate = useNavigate();
   const [habits, setHabits] = useState([]);
   const [categories] = useState([
     { id: 1, name: 'Health', color: '#28a745' }, // Green
@@ -264,29 +267,23 @@ const App = () => {
     authService.logout();
     setCurrentUser(undefined);
     setHabits([]);
+    navigate('/');
   };
 
   return (
-    <Router>
       <div className={`container-fluid py-4 ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
-        <div className="d-flex justify-content-between align-items-center mb-4 px-3">
-          <h1 className="text-center mb-0">Habit Tracker</h1>
-          <div>
-            {currentUser && (
-              <button className="btn btn-outline-secondary me-2" onClick={logOut}>
-                Logout
-              </button>
-            )}
-            <button className="btn btn-outline-secondary" onClick={toggleTheme}>
-              <i className={`bi bi-${theme === 'light' ? 'moon' : 'sun'}`}></i>
-            </button>
-          </div>
+        <Navbar currentUser={currentUser} logOut={logOut} />
+        <div className="d-flex justify-content-end align-items-center mb-4 px-3">
+          <button className="btn btn-outline-secondary" onClick={toggleTheme}>
+            <i className={`bi bi-${theme === 'light' ? 'moon' : 'sun'}`}></i>
+          </button>
         </div>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/"
+            path="/tracker"
             element={
               <PrivateRoute>
                 <MotivationalQuote />
@@ -410,7 +407,6 @@ const App = () => {
           />
         </Routes>
       </div>
-    </Router>
   );
 };
 

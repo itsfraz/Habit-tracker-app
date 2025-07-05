@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 
-const Login = () => {
+const Login = ({ setCurrentUser }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,8 +18,9 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      await authService.login({ email, password });
-      navigate('/');
+      const user = await authService.login({ email, password });
+      setCurrentUser(user);
+      navigate('/tracker');
     } catch (err) {
       setError('Invalid credentials. Please try again.');
     }
