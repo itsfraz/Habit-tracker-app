@@ -8,7 +8,9 @@ const auth = require('../middleware/auth');
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
+    console.log('Habits GET route: User ID from auth middleware:', req.user.id);
     const habits = await Habit.find({ user: req.user.id }).sort({ createdAt: -1 });
+    console.log('Habits GET route: Found habits:', habits.length);
     res.json(habits);
   } catch (err) {
     console.error(err.message);
@@ -23,6 +25,7 @@ router.post('/', auth, async (req, res) => {
   const { name, category, frequency, isTimeBased, targetDuration, reminderTime } = req.body;
 
   try {
+    console.log('Habits POST route: User ID from auth middleware:', req.user.id);
     const newHabit = new Habit({
       user: req.user.id,
       name,
@@ -34,6 +37,7 @@ router.post('/', auth, async (req, res) => {
     });
 
     const habit = await newHabit.save();
+    console.log('Habit saved:', habit);
     res.json(habit);
   } catch (err) {
     console.error(err.message);
