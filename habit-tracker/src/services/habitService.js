@@ -6,10 +6,22 @@ const API_URL = 'https://habit-tracker-backend-2ffd.onrender.com/api/habits/';
 const getAuthHeader = () => {
   const user = authService.getCurrentUser();
   if (user && user.token) {
-    return { 'x-auth-token': user.token };
+    return { 'Authorization': `Bearer ${user.token}` };
   }
   return {};
 };
+
+// Add error interceptor to handle 401 errors
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response && error.response.status === 401) {
+      authService.logout();
+      window.location = '/login'; // Redirect to login
+    }
+    return Promise.reject(error);
+  }
+);
 
 const getHabits = () => {
   return axios.get(API_URL, { headers: getAuthHeader() });
@@ -31,7 +43,6 @@ const completeHabit = (id) => {
   return axios.post(API_URL + id + '/complete', {}, { headers: getAuthHeader() });
 };
 
-// Assign to variable before exporting
 const habitService = {
   getHabits,
   addHabit,

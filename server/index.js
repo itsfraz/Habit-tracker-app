@@ -22,7 +22,7 @@ const corsOptions = {
   },
   credentials: true, // Enable credentials (cookies, authorization headers)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'] // Allowed headers
 };
 
 // Apply CORS middleware
