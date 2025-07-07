@@ -55,8 +55,9 @@ const StreakHeatmap = ({ habits, categories }) => {
         count: ratio,
       });
     }
+    console.log('Heatmap Values:', values);
     return values;
-  }, [filteredHabits]);
+  }, [filteredHabits, selectedMonth, selectedYear]);
 
   const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1);
   const lastDayOfMonth = new Date(selectedYear, selectedMonth + 1, 0);
@@ -142,6 +143,19 @@ const StreakHeatmap = ({ habits, categories }) => {
               .react-calendar-heatmap .color-scale-3 { fill: #30a14e; }
               .react-calendar-heatmap .color-scale-4 { fill: #216e39; }
               .react-calendar-heatmap .color-scale-5 { fill: #144d25; }
+
+              /* Example category-specific colors */
+              .react-calendar-heatmap .category-fitness-color-scale-1 { fill: #a7d9f0; }
+              .react-calendar-heatmap .category-fitness-color-scale-2 { fill: #62b0e0; }
+              .react-calendar-heatmap .category-fitness-color-scale-3 { fill: #3a8acb; }
+              .react-calendar-heatmap .category-fitness-color-scale-4 { fill: #1e63a6; }
+              .react-calendar-heatmap .category-fitness-color-scale-5 { fill: #0f3e7a; }
+
+              .react-calendar-heatmap .category-reading-color-scale-1 { fill: #f0e68c; }
+              .react-calendar-heatmap .category-reading-color-scale-2 { fill: #e0d25e; }
+              .react-calendar-heatmap .category-reading-color-scale-3 { fill: #d0be30; }
+              .react-calendar-heatmap .category-reading-color-scale-4 { fill: #c0aa02; }
+              .react-calendar-heatmap .category-reading-color-scale-5 { fill: #b09600; }
               .react-calendar-heatmap rect {
                 width: 8px;
                 height: 8px;
@@ -164,7 +178,13 @@ const StreakHeatmap = ({ habits, categories }) => {
             values={getValuesForHeatmap}
             classForValue={(value) => {
               if (!value || value.count === 0) return 'color-empty';
-              return `color-scale-${Math.ceil(value.count * 5)}`;
+              const baseClass = `color-scale-${Math.ceil(value.count * 5)}`;
+              if (selectedCategory) {
+                // Sanitize category name for CSS class
+                const categoryClass = selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '');
+                return `category-${categoryClass}-${baseClass}`;
+              }
+              return baseClass;
             }}
             showWeekdayLabels={true}
             gutterSize={1}  // Minimal gap between squares
