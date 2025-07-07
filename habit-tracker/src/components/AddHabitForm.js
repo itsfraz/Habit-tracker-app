@@ -7,8 +7,7 @@ const AddHabitForm = ({ addHabit, categories, customSuggestedHabits }) => {
   const [frequencyType, setFrequencyType] = useState('daily'); // 'daily', 'weekly', 'monthly', 'custom'
   const [customFrequencyCount, setCustomFrequencyCount] = useState(1);
   const [customFrequencyPeriod, setCustomFrequencyPeriod] = useState('week'); // 'week', 'month'
-  const [isTimeBased, setIsTimeBased] = useState(false);
-  const [targetDuration, setTargetDuration] = useState(0);
+  const [targetCompletions, setTargetCompletions] = useState(1);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,14 +20,13 @@ const AddHabitForm = ({ addHabit, categories, customSuggestedHabits }) => {
           period: customFrequencyPeriod,
         };
       }
-      addHabit({ name, category, frequency, isTimeBased, targetDuration: isTimeBased ? targetDuration : 0 });
+      addHabit({ name, category, frequency, targetCompletions });
       setName('');
       setCategory('');
       setFrequencyType('daily');
       setCustomFrequencyCount(1);
       setCustomFrequencyPeriod('week');
-      setIsTimeBased(false);
-      setTargetDuration(0);
+      setTargetCompletions(1);
     }
   };
 
@@ -101,31 +99,16 @@ const AddHabitForm = ({ addHabit, categories, customSuggestedHabits }) => {
 
           <div className="row g-3 mb-3 align-items-center">
             <div className="col-md-6">
-              <div className="form-check form-switch">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="timeBasedSwitch"
-                  checked={isTimeBased}
-                  onChange={(e) => setIsTimeBased(e.target.checked)}
-                />
-                <label className="form-check-label" htmlFor="timeBasedSwitch">
-                  Time-based Habit
-                </label>
-              </div>
+              <label htmlFor="targetCompletions" className="form-label">Target Completions per Day</label>
+              <input
+                type="number"
+                className="form-control"
+                id="targetCompletions"
+                value={targetCompletions}
+                onChange={(e) => setTargetCompletions(parseInt(e.target.value) || 1)}
+                min="1"
+              />
             </div>
-            {isTimeBased && (
-              <div className="col-md-6">
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Target duration (minutes)"
-                  value={targetDuration}
-                  onChange={(e) => setTargetDuration(parseInt(e.target.value) || 0)}
-                  min="0"
-                />
-              </div>
-            )}
           </div>
 
           <div className="row g-3 mb-3">
@@ -139,8 +122,7 @@ const AddHabitForm = ({ addHabit, categories, customSuggestedHabits }) => {
                     setName(selectedHabit.name);
                     setCategory(selectedHabit.category || '');
                     setFrequencyType(selectedHabit.frequency || 'daily');
-                    setIsTimeBased(selectedHabit.isTimeBased || false);
-                    setTargetDuration(selectedHabit.targetDuration || 0);
+                    setTargetCompletions(selectedHabit.targetCompletions || 1);
                   }
                 }}
               >

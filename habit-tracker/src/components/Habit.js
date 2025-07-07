@@ -6,9 +6,13 @@ import ReminderSettings from './ReminderSettings';
 const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminder }) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [note, setNote] = useState('');
-  const [duration, setDuration] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showReminderSettings, setShowReminderSettings] = useState(false);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const historyEntry = habit.history.find(entry => entry.date === today);
+  const completionsToday = historyEntry ? historyEntry.completions : 0;
+  const remainingCompletions = habit.targetCompletions - completionsToday;
 
   const getStreak = () => {
     let streak = 0;
@@ -48,13 +52,15 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
       }
 
       for (let i = habit.history.length - 1; i >= 0; i--) {
-        const date = new Date(habit.history[i].date);
-        date.setHours(0, 0, 0, 0);
+        const entryDate = new Date(habit.history[i].date);
+        entryDate.setHours(0, 0, 0, 0);
 
-        if (today.getTime() === date.getTime()) {
+        const currentDayCompletions = habit.history[i].completions || 0;
+
+        if (today.getTime() === entryDate.getTime() && currentDayCompletions >= habit.targetCompletions) {
           streak++;
           today.setDate(today.getDate() - increment);
-        } else if (today.getTime() > date.getTime()) {
+        } else if (today.getTime() > entryDate.getTime()) {
           break;
         }
       }
@@ -70,23 +76,6 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
     }
   };
 
-  const isDueTodayAndNotCompleted = () => {
-    if (habit.frequency !== 'daily') return false;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const lastCompletion = habit.history.length > 0
-      ? new Date(habit.history[habit.history.length - 1].date)
-      : null;
-
-    if (!lastCompletion) return true; // Never completed
-
-    lastCompletion.setHours(0, 0, 0, 0);
-
-    return today.getTime() !== lastCompletion.getTime();
-  };
-
   const categoryColor = categories.find(cat => cat.name === habit.category)?.color || '#6c757d'; // Default to gray if not found
 
   return (
@@ -98,8 +87,9 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
             <p className="card-text mb-1"><strong>Category:</strong> {habit.category}</p>
             <p className="card-text mb-1"><strong>Frequency:</strong> {typeof habit.frequency === 'object' ? `${habit.frequency.count} times per ${habit.frequency.period}` : habit.frequency}</p>
             <p className="card-text mb-1"><strong>Streak:</strong> {getStreak()}</p>
-            {isDueTodayAndNotCompleted() && (
-              <p className="text-danger fw-bold">Due today!</p>
+            <p className="card-text mb-1"><strong>Completions Today:</strong> {completionsToday} / {habit.targetCompletions}</p>
+            {remainingCompletions > 0 && (
+              <p className="text-danger fw-bold">Remaining: {remainingCompletions}</p>
             )}
           </div>
           <div className="d-flex flex-column align-items-end">
@@ -107,11 +97,12 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
               <button
                 className="btn btn-success btn-sm me-2"
                 onClick={() => {
-                  trackHabit(habit._id, habit.isTimeBased ? duration : null);
+                  trackHabit(habit._id);
                   setIsAnimating(true);
                   setTimeout(() => setIsAnimating(false), 500); // Animation duration
                 }}
                 title="Mark as Complete"
+                disabled={remainingCompletions <= 0}
               >
                 <i className="bi bi-check-lg"></i>
               </button>
@@ -137,19 +128,6 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
                 <i className="bi bi-trash"></i>
               </button>
             </div>
-            {habit.isTimeBased && (
-              <div className="input-group input-group-sm w-75">
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Min"
-                  value={duration}
-                  onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
-                  min="0"
-                />
-                <span className="input-group-text">Min</span>
-              </div>
-            )}
           </div>
         </div>
         {showCalendar && <HabitCalendar habit={habit} />}

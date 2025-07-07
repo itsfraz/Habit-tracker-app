@@ -2,7 +2,7 @@
 import React from 'react';
 import ProgressReports from './ProgressReports';
 import StreakHeatmap from './StreakHeatmap';
-import HabitCompletionChart from './HabitCompletionChart';
+
 import Badges from './Badges';
 
 const Analytics = ({ habits, categories, earnedBadges = [] }) => {
@@ -11,14 +11,19 @@ const Analytics = ({ habits, categories, earnedBadges = [] }) => {
       return 0;
     }
 
-    const firstTrackedDate = new Date(habit.history[0].date);
-    const today = new Date();
-    const totalDays = Math.ceil((today - firstTrackedDate) / (1000 * 60 * 60 * 24)) + 1;
+    let totalPossibleCompletions = 0;
+    let actualCompletions = 0;
 
-    const uniqueDates = new Set(habit.history.map(entry => new Date(entry.date).toDateString()));
-    const completedDays = uniqueDates.size;
+    habit.history.forEach(entry => {
+      totalPossibleCompletions += habit.targetCompletions;
+      actualCompletions += Math.min(entry.completions, habit.targetCompletions);
+    });
 
-    return (completedDays / totalDays) * 100;
+    if (totalPossibleCompletions === 0) {
+      return 0;
+    }
+
+    return (actualCompletions / totalPossibleCompletions) * 100;
   };
 
   const calculateCategorySuccessRate = (categoryName) => {
@@ -75,27 +80,11 @@ const Analytics = ({ habits, categories, earnedBadges = [] }) => {
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-12 mb-4">
-            <div className="card">
-              <div className="card-body">
-                <h4 className="card-title text-primary mb-3">Habit Completion Over Time</h4>
-                {habits.map((habit) => (
-                  <HabitCompletionChart key={habit.id} habit={habit} />
-                ))}
-              </div>
-            </div>
-          </div>
+        
 
+          <div className="row">
           <div className="col-12 mb-4">
-            <div className="card">
-              <div className="card-body">
-                <h4 className="card-title text-primary mb-3">Streak Heatmaps</h4>
-                {habits.map((habit) => (
-                  <StreakHeatmap key={habit.id} habit={habit} />
-                ))}
-              </div>
-            </div>
+            <StreakHeatmap habits={habits} categories={categories} />
           </div>
         </div>
 

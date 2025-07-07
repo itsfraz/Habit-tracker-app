@@ -1,4 +1,3 @@
-
 .habit-completed {
   animation: fadeOut 0.5s forwards;
 }
@@ -12,4 +11,13 @@
     opacity: 0;
     transform: translateY(-20px);
   }
+}
+
+.compact-heatmap .react-calendar-heatmap-square {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.compact-heatmap .react-calendar-heatmap-square text {
+  font-size: 8px !important;
 }

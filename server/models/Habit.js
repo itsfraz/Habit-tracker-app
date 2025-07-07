@@ -4,11 +4,10 @@ const HabitSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   name: String,
   category: String,
-  history: [{ date: String, duration: Number }],
+  history: [{ date: String, completions: {type: Number, default: 0} }],
   notes: [{ id: Number, text: String }],
   frequency: String,
-  isTimeBased: Boolean,
-  targetDuration: Number,
+  targetCompletions: {type: Number, default: 1},
   reminderTime: String,
 });
 

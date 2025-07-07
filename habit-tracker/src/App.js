@@ -53,7 +53,7 @@ const App = () => {
           ...habit,
           history: habit.history.map(entry => ({
             ...entry,
-            date: new Date(entry.date)
+            date: entry.date
           }))
         }));
         setHabits(habitsWithParsedDates);
@@ -209,18 +209,25 @@ const App = () => {
     });
   };
 
-  const trackHabit = (id, duration = null) => {
-    const habitToUpdate = habits.find(h => h._id === id);
+  const trackHabit = (id) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const habitsCopy = JSON.parse(JSON.stringify(habits));
+    const habitToUpdate = habitsCopy.find(h => h._id === id);
+
     if (habitToUpdate) {
-      const updatedHistory = [...habitToUpdate.history, { date: new Date().toISOString(), duration: duration }];
-      habitService.updateHabit(id, { ...habitToUpdate, history: updatedHistory }).then(res => {
-        setHabits(
-          habits.map((habit) =>
-            habit._id === id
-              ? { ...habit, history: updatedHistory }
-              : habit
-          )
-        );
+      const historyEntry = habitToUpdate.history.find(entry => entry.date === today);
+
+      if (historyEntry) {
+        historyEntry.completions += 1;
+      } else {
+        habitToUpdate.history.push({ date: today, completions: 1 });
+      }
+
+      setHabits(habitsCopy);
+
+      habitService.completeHabit(id).then(res => {
+        // The backend has been updated. We can optionally update the state again
+        // with the response from the server, but the optimistic update should suffice.
         setXp(prevXp => {
           const newXp = prevXp + 10;
           if (newXp >= XP_PER_LEVEL) {
@@ -229,6 +236,10 @@ const App = () => {
           }
           return newXp;
         });
+      }).catch(err => {
+        // If the API call fails, revert the changes
+        console.error("Failed to update habit", err);
+        setHabits(habits);
       });
     }
   };
