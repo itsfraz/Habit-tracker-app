@@ -2,8 +2,12 @@ import axios from 'axios';
 
 const API_URL = 'https://habit-tracker-backend-2ffd.onrender.com/api/auth';
 
-const register = (userData) => {
-  return axios.post(`${API_URL}/register`, userData);
+const register = async (userData) => {
+  const response = await axios.post(`${API_URL}/register`, userData);
+  if (response.data.token) {
+    localStorage.setItem('user', JSON.stringify(response.data));
+  }
+  return response.data;
 };
 
 const login = async (userData) => {
