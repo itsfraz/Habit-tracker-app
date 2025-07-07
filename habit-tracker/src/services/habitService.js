@@ -27,12 +27,17 @@ const deleteHabit = (id) => {
   return axios.delete(API_URL + id, { headers: getAuthHeader() });
 };
 
+const completeHabit = (id) => {
+  return axios.post(API_URL + id + '/complete', {}, { headers: getAuthHeader() });
+};
+
 // Assign to variable before exporting
 const habitService = {
   getHabits,
   addHabit,
   updateHabit,
-  deleteHabit
+  deleteHabit,
+  completeHabit
 };
 
 export default habitService;
