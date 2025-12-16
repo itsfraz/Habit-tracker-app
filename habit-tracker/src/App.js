@@ -36,9 +36,6 @@ const App = () => {
   ]);
   const [theme, setTheme] = useState('light');
   const [activeTab, setActiveTab] = useState('habits');
-  const [layout, setLayout] = useState('default');
-  const [isLayoutDropdownOpen, setIsLayoutDropdownOpen] = useState(false);
-  const layoutDropdownRef = useRef(null);
   const [level, setLevel] = useState(1);
   const [xp, setXp] = useState(0);
   const [customSuggestedHabits, setCustomSuggestedHabits] = useState([]);
@@ -135,16 +132,9 @@ const App = () => {
       Notification.requestPermission();
     }
 
-    const handleClickOutside = (event) => {
-      if (layoutDropdownRef.current && !layoutDropdownRef.current.contains(event.target)) {
-        setIsLayoutDropdownOpen(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+
+
   }, []);
 
   useEffect(() => {
@@ -329,41 +319,6 @@ const App = () => {
                       Dashboard
                     </button>
                   </li>
-                  <li className="nav-item dropdown" ref={layoutDropdownRef}>
-                    <button
-                      className="nav-link dropdown-toggle"
-                      onClick={() => setIsLayoutDropdownOpen(!isLayoutDropdownOpen)}
-                      aria-expanded={isLayoutDropdownOpen}
-                    >
-                      Layout
-                    </button>
-                    <ul className={`dropdown-menu ${isLayoutDropdownOpen ? 'show' : ''}`}>
-                      <li>
-                        <button className="dropdown-item" onClick={() => {
-                          setLayout('default');
-                          setIsLayoutDropdownOpen(false);
-                        }}>
-                          Default
-                        </button>
-                      </li>
-                      <li>
-                        <button className="dropdown-item" onClick={() => {
-                          setLayout('analytics-first');
-                          setIsLayoutDropdownOpen(false);
-                        }}>
-                          Analytics First
-                        </button>
-                      </li>
-                      <li>
-                        <button className="dropdown-item" onClick={() => {
-                          setLayout('full-width-habits');
-                          setIsLayoutDropdownOpen(false);
-                        }}>
-                          Full Width Habits
-                        </button>
-                      </li>
-                    </ul>
-                  </li>
                   <li className="nav-item">
                     <button
                       className={`nav-link ${activeTab === 'data' ? 'active' : ''}`}
@@ -398,7 +353,7 @@ const App = () => {
                 {activeTab === 'analytics' && (
                   <>
                     <LevelDisplay level={level} xp={xp} XP_PER_LEVEL={XP_PER_LEVEL} />
-                    <Analytics habits={habits} categories={categories} earnedBadges={calculateEarnedBadges(habits)} />
+                    <Analytics habits={habits} categories={categories} earnedBadges={calculateEarnedBadges(habits)} theme={theme} />
                     <ShareProgress habits={habits} level={level} />
                   </>
                 )}
@@ -410,9 +365,9 @@ const App = () => {
                     deleteHabit={deleteHabit}
                     trackHabit={trackHabit}
                     addNote={addNote}
-                    layout={layout}
                     user={currentUser}
                     setReminder={setReminder}
+                    theme={theme}
                   />
                 )}
 

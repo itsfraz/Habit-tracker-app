@@ -3,7 +3,7 @@ import React from 'react';
 import HabitList from './HabitList';
 import Analytics from './Analytics';
 
-const Dashboard = ({ habits, categories, deleteHabit, trackHabit, addNote, layout, user, setReminder }) => {
+const Dashboard = ({ habits, categories, deleteHabit, trackHabit, addNote, user, setReminder, theme }) => {
   const totalHabits = habits.length;
   const activeCategories = new Set(habits.map(h => h.category)).size;
   const totalCompletions = habits.reduce((total, habit) => {
@@ -75,72 +75,26 @@ const Dashboard = ({ habits, categories, deleteHabit, trackHabit, addNote, layou
 
       {/* Main Content Area */}
       <div className="dashboard-content">
-        {layout === 'default' && (
-          <div className="row g-4">
-            <div className="col-lg-7 mb-4">
-              <div className="section-container">
-                <h4 className="section-title mb-4 ps-2 border-start border-4 border-primary">My Habits</h4>
-                <HabitList
-                  habits={habits}
-                  deleteHabit={deleteHabit}
-                  trackHabit={trackHabit}
-                  addNote={addNote}
-                  categories={categories}
-                  setReminder={setReminder}
-                />
-              </div>
-            </div>
-            <div className="col-lg-5 mb-4">
-              <div className="section-container sticky-top" style={{ top: '20px', zIndex: 1 }}>
-                 <Analytics habits={habits} categories={categories} />
-              </div>
+        <div className="row g-4">
+          <div className="col-lg-7 mb-4">
+            <div className="section-container">
+              <h4 className="section-title mb-4 ps-2 border-start border-4 border-primary">My Habits</h4>
+              <HabitList
+                habits={habits}
+                deleteHabit={deleteHabit}
+                trackHabit={trackHabit}
+                addNote={addNote}
+                categories={categories}
+                setReminder={setReminder}
+              />
             </div>
           </div>
-        )}
-
-        {layout === 'analytics-first' && (
-          <div className="row g-4">
-            <div className="col-lg-5 mb-4 order-lg-1 order-2">
-              <div className="section-container sticky-top" style={{ top: '20px', zIndex: 1 }}>
-                <Analytics habits={habits} categories={categories} />
-              </div>
-            </div>
-            <div className="col-lg-7 mb-4 order-lg-2 order-1">
-              <div className="section-container">
-                <h4 className="section-title mb-4 ps-2 border-start border-4 border-primary">My Habits</h4>
-                <HabitList
-                  habits={habits}
-                  deleteHabit={deleteHabit}
-                  trackHabit={trackHabit}
-                  addNote={addNote}
-                  categories={categories}
-                  setReminder={setReminder}
-                />
-              </div>
+          <div className="col-lg-5 mb-4">
+            <div className="section-container sticky-top" style={{ top: '20px', zIndex: 1 }}>
+                <Analytics habits={habits} categories={categories} theme={theme} />
             </div>
           </div>
-        )}
-
-        {layout === 'full-width-habits' && (
-          <div className="row g-4">
-            <div className="col-12 mb-5">
-              <div className="section-container">
-                <h4 className="section-title mb-4 ps-2 border-start border-4 border-primary">My Habits</h4>
-                <HabitList
-                  habits={habits}
-                  deleteHabit={deleteHabit}
-                  trackHabit={trackHabit}
-                  addNote={addNote}
-                  categories={categories}
-                  setReminder={setReminder}
-                />
-              </div>
-            </div>
-            <div className="col-12 mb-4">
-               <Analytics habits={habits} categories={categories} />
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

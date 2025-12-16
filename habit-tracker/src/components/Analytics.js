@@ -25,8 +25,9 @@ ChartJS.register(
   ArcElement
 );
 
-const Analytics = ({ habits, categories, earnedBadges = [] }) => {
-  
+const Analytics = ({ habits, categories, earnedBadges = [], theme = 'light' }) => {
+  const isDark = theme === 'dark';
+
   // --- Calculation Helpers ---
   const calculateHabitSuccessRate = (habit) => {
     if (!habit.history || habit.history.length === 0) return 0;
@@ -78,16 +79,16 @@ const Analytics = ({ habits, categories, earnedBadges = [] }) => {
     };
   }, [habits, categories]);
 
-  const barOptions = {
+  const barOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       tooltip: {
-         backgroundColor: '#fff',
-         titleColor: '#000',
-         bodyColor: '#666',
-         borderColor: '#eee',
+         backgroundColor: isDark ? '#1e293b' : '#fff',
+         titleColor: isDark ? '#f8fafc' : '#000',
+         bodyColor: isDark ? '#cbd5e1' : '#666',
+         borderColor: isDark ? '#334155' : '#eee',
          borderWidth: 1,
          padding: 10,
          callbacks: {
@@ -99,17 +100,25 @@ const Analytics = ({ habits, categories, earnedBadges = [] }) => {
       y: {
         beginAtZero: true,
         max: 100,
-        grid: { color: '#f0f0f0' },
-        ticks: { font: { size: 10 } }
+        grid: { color: isDark ? '#334155' : '#f0f0f0' },
+        ticks: { 
+            font: { size: 10 },
+            color: isDark ? '#cbd5e1' : '#666'
+        }
       },
       x: {
         grid: { display: false },
-        ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 0 }
+        ticks: { 
+            font: { size: 10 }, 
+            color: isDark ? '#cbd5e1' : '#666',
+            maxRotation: 45, 
+            minRotation: 0 
+        }
       }
     }
-  };
+  }), [isDark]);
 
-  // 2. Pie Chart: Habits by Category (Count or Success?) -> Let's show Category Success Comparison
+  // 2. Pie Chart: Category Success Comparison
   const pieChartData = useMemo(() => {
      // Filter out categories with no habits for cleaner chart
      const activeCategories = categories.filter(c => habits.some(h => h.category === c.name));
@@ -125,13 +134,13 @@ const Analytics = ({ habits, categories, earnedBadges = [] }) => {
            data,
            backgroundColor: bgColors,
            borderWidth: 2,
-           borderColor: '#fff',
+           borderColor: isDark ? '#1e293b' : '#fff', // Match card background
          }
        ]
      };
-  }, [habits, categories]);
+  }, [habits, categories, isDark]);
 
-  const pieOptions = {
+  const pieOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -140,10 +149,16 @@ const Analytics = ({ habits, categories, earnedBadges = [] }) => {
          labels: { 
            usePointStyle: true, 
            boxWidth: 8,
-           font: { size: 11 } 
+           font: { size: 11 },
+           color: isDark ? '#cbd5e1' : '#666'
          } 
        },
        tooltip: {
+         backgroundColor: isDark ? '#1e293b' : '#fff',
+         titleColor: isDark ? '#f8fafc' : '#000',
+         bodyColor: isDark ? '#cbd5e1' : '#666',
+         borderColor: isDark ? '#334155' : '#eee',
+         borderWidth: 1,
          callbacks: {
             label: function(context) {
                 let label = context.label || '';
@@ -159,7 +174,7 @@ const Analytics = ({ habits, categories, earnedBadges = [] }) => {
          }
        }
     }
-  };
+  }), [isDark]);
 
 
   return (
@@ -229,7 +244,7 @@ const Analytics = ({ habits, categories, earnedBadges = [] }) => {
        {/* Progress & Badges Row */}
        <div className="row g-4">
           <div className="col-lg-8">
-             <ProgressReports habits={habits} />
+             <ProgressReports habits={habits} theme={theme} />
           </div>
           <div className="col-lg-4">
              <div className="modern-card p-4 rounded-4 h-100 bg-light-subtle">

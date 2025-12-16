@@ -370,6 +370,158 @@ body {
   z-index: 5;
 }
 
+/* --- Dark Mode System --- */
+body.bg-dark {
+  background-color: #0f172a !important; /* Slate-900 */
+  color: #f8fafc !important; /* Slate-50 */
+}
+
+/* Text Overrides for Dark Mode */
+body.bg-dark .text-dark,
+body.bg-dark .text-body,
+body.bg-dark h1, body.bg-dark h2, body.bg-dark h3, body.bg-dark h4, body.bg-dark h5, body.bg-dark h6 {
+  color: #f8fafc !important;
+}
+
+body.bg-dark .text-muted {
+  color: #94a3b8 !important; /* Slate-400 */
+}
+
+body.bg-dark .text-secondary {
+  color: #cbd5e1 !important; /* Slate-300 */
+}
+
+/* Card Overrides */
+body.bg-dark .modern-card,
+body.bg-dark .card {
+  background-color: #1e293b !important; /* Slate-800 */
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+body.bg-dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+body.bg-dark .bg-light {
+  background-color: #0f172a !important; /* Darker distinct background */
+}
+
+/* Form Controls in Dark Mode */
+body.bg-dark .form-control,
+body.bg-dark .form-select {
+  background-color: #0f172a !important;
+  border-color: #334155 !important; /* Slate-700 */
+  color: #f8fafc !important;
+}
+
+body.bg-dark .form-control:focus,
+body.bg-dark .form-select:focus {
+  background-color: #0f172a !important;
+  border-color: #0d6efd !important;
+  color: #f8fafc !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+body.bg-dark .form-select option {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+/* Calendar Dark Mode */
+body.bg-dark .custom-calendar-container .react-calendar {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+body.bg-dark .custom-calendar-container .react-calendar__navigation button {
+  color: #f8fafc;
+}
+
+body.bg-dark .custom-calendar-container .react-calendar__navigation button:enabled:hover,
+body.bg-dark .custom-calendar-container .react-calendar__navigation button:enabled:focus {
+  background-color: #334155;
+}
+
+body.bg-dark .custom-calendar-container .react-calendar__tile:enabled:hover,
+body.bg-dark .custom-calendar-container .react-calendar__tile:enabled:focus {
+  background-color: #334155;
+  color: #fff;
+}
+
+body.bg-dark .custom-calendar-container .react-calendar__month-view__weekdays {
+  color: #94a3b8;
+}
+
+body.bg-dark .custom-calendar-container .react-calendar__tile {
+  color: #cbd5e1;
+}
+
+body.bg-dark .custom-calendar-container .react-calendar__tile--now {
+  background: rgba(13, 110, 253, 0.2);
+  color: #60a5fa;
+}
+
+/* Navbar & Footer Dark Mode */
+body.bg-dark .navbar-glass {
+  background: rgba(15, 23, 42, 0.85); /* Darker glass */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.bg-dark .footer {
+  background-color: #1e293b !important; /* Match card bg */
+  border-top-color: rgba(255, 255, 255, 0.05) !important;
+  color: #cbd5e1;
+}
+
+/* Specific Component Fixes */
+body.bg-dark .reminder-widget {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+body.bg-dark .reminder-widget:hover {
+  background: #1e293b;
+}
+
+body.bg-dark .time-picker-wrapper input[type="time"] {
+  color: #f8fafc;
+}
+
+body.bg-dark .chip-success {
+  background-color: rgba(25, 135, 84, 0.2);
+  color: #4ade80; /* Brighter green */
+}
+
+/* Button & Icon States */
+body.bg-dark .btn-light {
+    background-color: #334155;
+    color: #f8fafc;
+    border-color: #475569;
+}
+body.bg-dark .btn-light:hover {
+    background-color: #475569;
+    color: #fff;
+}
+
+/* Scrollbar Dark */
+body.bg-dark ::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+body.bg-dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+body.bg-dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Chart Tooltip Overrides */
+body.bg-dark .chartjs-tooltip {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+
 
 
 

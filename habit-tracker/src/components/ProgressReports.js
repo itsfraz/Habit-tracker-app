@@ -23,7 +23,8 @@ ChartJS.register(
   Filler
 );
 
-const ProgressReports = ({ habits }) => {
+const ProgressReports = ({ habits, theme = 'light' }) => {
+  const isDark = theme === 'dark';
   const [timeRange, setTimeRange] = useState('ALL'); // ALL, YEAR, 30_DAYS
   const chartRef = useRef(null);
   const [gradient, setGradient] = useState(null);
@@ -125,7 +126,7 @@ const ProgressReports = ({ habits }) => {
     };
   }, [habits, timeRange, gradient]);
 
-  const options = {
+  const options = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -133,10 +134,10 @@ const ProgressReports = ({ habits }) => {
       tooltip: {
         mode: 'index',
         intersect: false,
-        backgroundColor: 'rgba(15, 23, 42, 0.9)', // Slate-900 transparent
+        backgroundColor: isDark ? '#1e293b' : 'rgba(15, 23, 42, 0.9)', 
         titleColor: '#f8fafc',
         bodyColor: '#cbd5e1',
-        borderColor: 'rgba(255,255,255,0.1)',
+        borderColor: isDark ? '#334155' : 'rgba(255,255,255,0.1)',
         borderWidth: 1,
         padding: 12,
         cornerRadius: 8,
@@ -151,12 +152,12 @@ const ProgressReports = ({ habits }) => {
       y: {
         beginAtZero: true,
         grid: {
-            color: '#f1f5f9', // Slate-100
+            color: isDark ? '#334155' : '#f1f5f9', // Slate-700 : Slate-100
             borderDash: [5, 5],
         },
         ticks: { 
             stepSize: 1,
-            color: '#64748b', // Slate-500
+            color: isDark ? '#94a3b8' : '#64748b', // Slate-400 : Slate-500
             font: { size: 11, family: 'Inter, sans-serif' }
         },
         border: { display: false }
@@ -164,7 +165,7 @@ const ProgressReports = ({ habits }) => {
       x: {
         grid: { display: false },
         ticks: {
-            color: '#64748b',
+            color: isDark ? '#94a3b8' : '#64748b',
             font: { size: 11 },
             maxTicksLimit: 8,
             maxRotation: 0,
@@ -181,7 +182,7 @@ const ProgressReports = ({ habits }) => {
         duration: 800,
         easing: 'easeOutQuart'
     }
-  };
+  }), [isDark]);
 
   return (
     <div className="d-flex flex-column h-100">
