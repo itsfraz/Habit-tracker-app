@@ -18,23 +18,23 @@ const HabitSuggestions = ({ habits, addHabit, customSuggestedHabits }) => {
   }
 
   return (
-    <div className="modern-card p-4 rounded-4 mb-5 border-dashed fade-in">
-      <div className="d-flex align-items-center mb-3">
-        <i className="bi bi-lightbulb-fill text-warning me-2 fs-5"></i>
-        <h5 className="fw-bold mb-0">Need Inspiration?</h5>
+    <div className="modern-card p-4 rounded-4 mb-4 fade-in">
+      <div className="d-flex align-items-center mb-3 text-warning">
+        <i className="bi bi-lightbulb-fill me-2 fs-5"></i>
+        <h6 className="fw-bold mb-0 text-dark">Need Inspiration?</h6>
       </div>
-      <p className="text-muted small mb-3">Single click to add any of these popular habits to your list.</p>
       
       <div className="d-flex flex-wrap gap-2">
         {allSuggestions.map((suggestion, index) => (
-          <div
+          <button
             key={index}
-            className="chip chip-success bg-white shadow-sm"
+            className="btn btn-sm btn-light border-0 rounded-pill px-3 py-2 d-flex align-items-center gap-2 shadow-sm hover-primary transition-all"
             onClick={() => addHabit(suggestion)}
+            style={{ fontSize: '0.85rem' }}
           >
-            <i className="bi bi-plus-circle me-2 opacity-50"></i>
-            {suggestion.name}
-          </div>
+            <i className="bi bi-plus-circle text-primary opacity-50"></i>
+            <span className="fw-medium text-dark">{suggestion.name}</span>
+          </button>
         ))}
       </div>
     </div>

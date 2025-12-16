@@ -17,6 +17,7 @@ import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import authService from './services/authService';
 import habitService from './services/habitService';
+import Footer from './components/Footer';
 
 const PrivateRoute = ({ children }) => {
   const user = authService.getCurrentUser();
@@ -396,8 +397,8 @@ const App = () => {
 
                 {activeTab === 'analytics' && (
                   <>
-                    <Analytics habits={habits} categories={categories} earnedBadges={calculateEarnedBadges(habits)} />
                     <LevelDisplay level={level} xp={xp} XP_PER_LEVEL={XP_PER_LEVEL} />
+                    <Analytics habits={habits} categories={categories} earnedBadges={calculateEarnedBadges(habits)} />
                     <ShareProgress habits={habits} level={level} />
                   </>
                 )}
@@ -429,6 +430,7 @@ const App = () => {
             }
           />
         </Routes>
+        <Footer />
       </div>
   );
 };

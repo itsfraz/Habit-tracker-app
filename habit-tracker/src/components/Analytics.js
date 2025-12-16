@@ -1,106 +1,246 @@
-
-import React from 'react';
+import React, { useMemo } from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+} from 'chart.js';
+import { Bar, Pie } from 'react-chartjs-2';
 import ProgressReports from './ProgressReports';
 import StreakHeatmap from './StreakHeatmap';
-
 import Badges from './Badges';
 
+// Register ChartJS
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
+
 const Analytics = ({ habits, categories, earnedBadges = [] }) => {
+  
+  // --- Calculation Helpers ---
   const calculateHabitSuccessRate = (habit) => {
-    if (!habit.history || habit.history.length === 0) {
-      return 0;
-    }
-
-    let totalPossibleCompletions = 0;
-    let actualCompletions = 0;
-
+    if (!habit.history || habit.history.length === 0) return 0;
+    
+    let totalPossible = 0;
+    let actual = 0;
+    
+    // Consider last 30 days for "Current Success Rate" to be more relevant
+    // or just use all history as before. Let's stick to all history for consistency.
     habit.history.forEach(entry => {
-      totalPossibleCompletions += habit.targetCompletions;
-      actualCompletions += Math.min(entry.completions, habit.targetCompletions);
+      totalPossible += habit.targetCompletions;
+      actual += Math.min(entry.completions, habit.targetCompletions);
     });
 
-    if (totalPossibleCompletions === 0) {
-      return 0;
-    }
-
-    return (actualCompletions / totalPossibleCompletions) * 100;
+    return totalPossible === 0 ? 0 : (actual / totalPossible) * 100;
   };
 
   const calculateCategorySuccessRate = (categoryName) => {
     const habitsInCategory = habits.filter(habit => habit.category === categoryName);
-    if (habitsInCategory.length === 0) {
-      return 0;
-    }
-
-    const totalSuccessRate = habitsInCategory.reduce((sum, habit) => sum + calculateHabitSuccessRate(habit), 0);
-    return totalSuccessRate / habitsInCategory.length;
+    if (habitsInCategory.length === 0) return 0;
+    const totalRate = habitsInCategory.reduce((sum, h) => sum + calculateHabitSuccessRate(h), 0);
+    return totalRate / habitsInCategory.length;
   };
+
+  // --- Chart Data Preparation ---
+  
+  // 1. Bar Chart: Success Rate per Habit
+  const barChartData = useMemo(() => {
+    const labels = habits.map(h => h.name);
+    const data = habits.map(h => calculateHabitSuccessRate(h));
+    
+    // Create gradient-like colors or category-based colors
+    const bgColors = habits.map(h => {
+       const cat = categories.find(c => c.name === h.category);
+       return cat ? cat.color : '#0d6efd';
+    });
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Success Rate (%)',
+          data,
+          backgroundColor: bgColors,
+          borderRadius: 8,
+          barThickness: 20,
+        }
+      ]
+    };
+  }, [habits, categories]);
+
+  const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+         backgroundColor: '#fff',
+         titleColor: '#000',
+         bodyColor: '#666',
+         borderColor: '#eee',
+         borderWidth: 1,
+         padding: 10,
+         callbacks: {
+            label: (context) => `${context.raw.toFixed(1)}% Success`
+         }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        grid: { color: '#f0f0f0' },
+        ticks: { font: { size: 10 } }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 0 }
+      }
+    }
+  };
+
+  // 2. Pie Chart: Habits by Category (Count or Success?) -> Let's show Category Success Comparison
+  const pieChartData = useMemo(() => {
+     // Filter out categories with no habits for cleaner chart
+     const activeCategories = categories.filter(c => habits.some(h => h.category === c.name));
+     
+     const labels = activeCategories.map(c => c.name);
+     const data = activeCategories.map(c => calculateCategorySuccessRate(c.name));
+     const bgColors = activeCategories.map(c => c.color || '#ccc');
+
+     return {
+       labels,
+       datasets: [
+         {
+           data,
+           backgroundColor: bgColors,
+           borderWidth: 2,
+           borderColor: '#fff',
+         }
+       ]
+     };
+  }, [habits, categories]);
+
+  const pieOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+       legend: { 
+         position: 'bottom', 
+         labels: { 
+           usePointStyle: true, 
+           boxWidth: 8,
+           font: { size: 11 } 
+         } 
+       },
+       tooltip: {
+         callbacks: {
+            label: function(context) {
+                let label = context.label || '';
+                if (label) {
+                    label += ': ';
+                }
+                if (context.parsed !== null) {
+                    // Assuming data is success rate percentage
+                    label += context.parsed.toFixed(1) + '% Success';
+                }
+                return label;
+            }
+         }
+       }
+    }
+  };
+
 
   return (
     <div className="analytics-container fade-in">
-      <div className="modern-card rounded-4 p-4 mb-4">
-        <h3 className="section-title mb-4">Analytics & Visualization</h3>
-        
-        <div className="row g-4">
-          <div className="col-md-6 mb-4">
-            <div className="h-100 card border-0 shadow-sm rounded-4 bg-light overflow-hidden">
-              <div className="card-header bg-transparent border-0 pt-4 px-4 pb-0">
-                <h5 className="card-title text-primary fw-bold mb-0">Habit Success Rates</h5>
-              </div>
-              <div className="card-body px-4 pb-4">
-                <ul className="list-group list-group-flush bg-transparent">
-                  {habits.map((habit) => (
-                    <li key={habit.id} className="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0 border-bottom-dashed">
-                      <span className="fw-medium">{habit.name}</span>
-                      <span className="badge bg-primary rounded-pill shadow-sm">
-                        {calculateHabitSuccessRate(habit).toFixed(0)}%
-                      </span>
-                    </li>
-                  ))}
-                  {habits.length === 0 && <p className="text-muted small">No habits to show yet.</p>}
-                </ul>
-              </div>
-            </div>
+       <div className="d-flex align-items-center mb-4">
+          <h3 className="fw-bold mb-0 text-dark">Your Insights</h3>
+          <span className="ms-3 badge bg-light text-secondary rounded-pill border">
+            {habits.length} Active Habits
+          </span>
+       </div>
+
+       {/* Charts Row */}
+       <div className="row g-4 mb-4">
+          {/* Success Rates Bar Chart */}
+          <div className="col-lg-8">
+             <div className="modern-card p-4 rounded-4 h-100">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                   <h5 className="fw-bold text-dark mb-0">Habit Performance</h5>
+                   <i className="bi bi-bar-chart-fill text-primary opacity-50 fs-5"></i>
+                </div>
+                <div style={{ height: '300px' }}>
+                   {habits.length > 0 ? (
+                      <Bar data={barChartData} options={barOptions} />
+                   ) : (
+                      <div className="h-100 d-flex align-items-center justify-content-center text-muted small">
+                         No data available
+                      </div>
+                   )}
+                </div>
+             </div>
           </div>
 
-          <div className="col-md-6 mb-4">
-            <div className="h-100 card border-0 shadow-sm rounded-4 bg-light overflow-hidden">
-              <div className="card-header bg-transparent border-0 pt-4 px-4 pb-0">
-                <h5 className="card-title text-primary fw-bold mb-0">Category Success Rates</h5>
-              </div>
-              <div className="card-body px-4 pb-4">
-                <ul className="list-group list-group-flush bg-transparent">
-                  {categories.map((category) => (
-                    <li key={category.id} className="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0 border-bottom-dashed">
-                      <span className="fw-medium">{category.name}</span>
-                      <span className="badge bg-success rounded-pill shadow-sm">
-                        {calculateCategorySuccessRate(category.name).toFixed(0)}%
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+          {/* Category Distribution / Success */}
+          <div className="col-lg-4">
+             <div className="modern-card p-4 rounded-4 h-100">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                   <h5 className="fw-bold text-dark mb-0">Category Strength</h5>
+                   <i className="bi bi-pie-chart-fill text-success opacity-50 fs-5"></i>
+                </div>
+                <div style={{ height: '250px', position: 'relative' }}>
+                   {habits.length > 0 ? (
+                     <Pie data={pieChartData} options={pieOptions} />
+                   ) : (
+                      <div className="h-100 d-flex align-items-center justify-content-center text-muted small">
+                         No data available
+                      </div>
+                   )}
+                   
+                   {/* Centered Score (Average) if wanted, or just clean */}
+                </div>
+                <p className="text-center text-muted small mt-3 mb-0">
+                   Success rates aggregated by category.
+                </p>
+             </div>
           </div>
-        </div>
+       </div>
 
-        <div className="row mt-2">
-          <div className="col-12 mb-4">
-             <div className="modern-card p-3 rounded-4">
+       {/* Heatmap Row */}
+       <div className="row mb-4">
+          <div className="col-12">
+             <div className="modern-card p-4 rounded-4">
                 <StreakHeatmap habits={habits} categories={categories} />
              </div>
           </div>
-        </div>
+       </div>
 
-        <div className="row">
-          <div className="col-12 mb-4">
-            <ProgressReports habits={habits} />
+       {/* Progress & Badges Row */}
+       <div className="row g-4">
+          <div className="col-lg-8">
+             <ProgressReports habits={habits} />
           </div>
-          <div className="col-12">
-            <Badges earnedBadges={earnedBadges} />
+          <div className="col-lg-4">
+             <div className="modern-card p-4 rounded-4 h-100 bg-light-subtle">
+                <div className="d-flex align-items-center mb-3">
+                   <h5 className="fw-bold text-dark mb-0">Trophy Case</h5>
+                   <i className="bi bi-award-fill text-warning ms-2"></i>
+                </div>
+                <Badges earnedBadges={earnedBadges} />
+             </div>
           </div>
-        </div>
-      </div>
+       </div>
     </div>
   );
 };
