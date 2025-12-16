@@ -2,12 +2,18 @@ const jwt = require('jsonwebtoken');
 
 module.exports = function (req, res, next) {
   // Get token from header
-  const token = req.header('x-auth-token');
-  console.log('Auth Middleware: Received Token:', token ? token.substring(0, 10) + '...' : 'No Token'); // Log first 10 chars of token
+  let token = req.header('Authorization');
+  console.log('Auth Middleware: Received Header:', token);
 
   // Check if not token
   if (!token) {
     return res.status(401).json({ msg: 'No token, authorization denied' });
+  }
+
+  // Check for Bearer token
+  if (token.startsWith('Bearer ')) {
+    // Remove Bearer from string
+    token = token.slice(7, token.length).trimLeft();
   }
 
   // Verify token

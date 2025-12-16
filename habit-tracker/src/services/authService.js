@@ -1,9 +1,15 @@
 import axios from 'axios';
 
-const API_URL = 'https://habit-tracker-backend-2ffd.onrender.com/api/auth';
+const API_URL = 'http://localhost:5000/api/auth';
+
+// Create a separate Axios instance for auth requests
+const authApi = axios.create({
+  baseURL: API_URL,
+});
 
 const register = async (userData) => {
-  const response = await axios.post(`${API_URL}/register`, userData);
+  // Use the dedicated authApi instance
+  const response = await authApi.post('/register', userData);
   if (response.data.token) {
     localStorage.setItem('user', JSON.stringify(response.data));
   }
@@ -11,7 +17,8 @@ const register = async (userData) => {
 };
 
 const login = async (userData) => {
-  const response = await axios.post(`${API_URL}/login`, userData);
+  // Use the dedicated authApi instance
+  const response = await authApi.post('/login', userData);
   if (response.data.token) {
     localStorage.setItem('user', JSON.stringify(response.data));
   }

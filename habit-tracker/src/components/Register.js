@@ -22,7 +22,9 @@ const Register = () => {
       await authService.register({ username: name, email, password });
       navigate('/login');
     } catch (err) {
-      setError('Failed to register. Please try again.');
+      const errorMessage = err.response?.data?.msg || 'Failed to register. Please try again.';
+      setError(errorMessage);
+      console.error('Registration Error:', err.response || err);
     }
   };
 

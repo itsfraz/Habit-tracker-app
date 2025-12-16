@@ -1,11 +1,12 @@
 import axios from 'axios';
 import authService from './authService';
 
-const API_URL = 'https://habit-tracker-backend-2ffd.onrender.com/api/habits/';
+const API_URL = 'http://localhost:5000/api/habits/';
 
 const getAuthHeader = () => {
   const user = authService.getCurrentUser();
   if (user && user.token) {
+    // Correctly format the Authorization header
     return { 'Authorization': `Bearer ${user.token}` };
   }
   return {};

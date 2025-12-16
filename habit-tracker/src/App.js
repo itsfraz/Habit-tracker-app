@@ -46,8 +46,13 @@ const App = () => {
 
   useEffect(() => {
     const user = authService.getCurrentUser();
-    if (user) {
+    if (user && user.token) {
       setCurrentUser(user);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
       habitService.getHabits().then(res => {
         const habitsWithParsedDates = res.data.map(habit => ({
           ...habit,
@@ -57,9 +62,13 @@ const App = () => {
           }))
         }));
         setHabits(habitsWithParsedDates);
+      }).catch(err => {
+        if (err.response && err.response.status === 401) {
+          logOut();
+        }
       });
     }
-  }, []);
+  }, [currentUser]);
 
 
   const allBadges = [
@@ -283,12 +292,7 @@ const App = () => {
 
   return (
       <div className={`container-fluid py-4 ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
-        <Navbar currentUser={currentUser} logOut={logOut} />
-        <div className="d-flex justify-content-end align-items-center mb-4 px-3">
-          <button className="btn btn-outline-secondary" onClick={toggleTheme}>
-            <i className={`bi bi-${theme === 'light' ? 'moon' : 'sun'}`}></i>
-          </button>
-        </div>
+        <Navbar currentUser={currentUser} logOut={logOut} toggleTheme={toggleTheme} theme={theme} />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
@@ -370,18 +374,24 @@ const App = () => {
                 </ul>
 
                 {activeTab === 'habits' && (
-                  <>
-                    <AddHabitForm addHabit={addHabit} categories={categories} customSuggestedHabits={customSuggestedHabits} />
-                    <HabitSuggestions habits={habits} addHabit={addHabit} categories={categories} customSuggestedHabits={customSuggestedHabits} />
-                    <HabitList
-                      habits={habits}
-                      deleteHabit={deleteHabit}
-                      trackHabit={trackHabit}
-                      addNote={addNote}
-                      categories={categories}
-                      setReminder={setReminder}
-                    />
-                  </>
+                  <div className="row g-4">
+                    <div className="col-lg-4 mb-4">
+                      <div className="sticky-top" style={{ top: '90px', zIndex: 1 }}>
+                        <AddHabitForm addHabit={addHabit} categories={categories} customSuggestedHabits={customSuggestedHabits} />
+                      </div>
+                    </div>
+                    <div className="col-lg-8">
+                       <HabitSuggestions habits={habits} addHabit={addHabit} categories={categories} customSuggestedHabits={customSuggestedHabits} />
+                       <HabitList
+                        habits={habits}
+                        deleteHabit={deleteHabit}
+                        trackHabit={trackHabit}
+                        addNote={addNote}
+                        categories={categories}
+                        setReminder={setReminder}
+                      />
+                    </div>
+                  </div>
                 )}
 
                 {activeTab === 'analytics' && (
@@ -400,6 +410,8 @@ const App = () => {
                     trackHabit={trackHabit}
                     addNote={addNote}
                     layout={layout}
+                    user={currentUser}
+                    setReminder={setReminder}
                   />
                 )}
 

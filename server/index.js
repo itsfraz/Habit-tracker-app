@@ -9,7 +9,8 @@ const PORT = process.env.PORT || 5000;
 // CORS Configuration
 const allowedOrigins = [
   'https://habit-tracker-front.netlify.app', // Your Netlify frontend
-  'http://localhost:3000'                   // For local development
+  'http://localhost:3000',                   // For local development
+  'http://localhost:3001'                    // Add this for your React app
 ];
 
 const corsOptions = {

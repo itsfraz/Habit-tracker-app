@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const suggestedHabits = [
@@ -12,27 +11,31 @@ const suggestedHabits = [
 const HabitSuggestions = ({ habits, addHabit, customSuggestedHabits }) => {
   const allSuggestions = [...suggestedHabits, ...customSuggestedHabits];
 
-  const showSuggestions = habits.length < 3; // Show suggestions if less than 3 habits
+  const showSuggestions = habits.length < 5; // Relaxed condition to show more often
 
   if (!showSuggestions) {
     return null;
   }
 
   return (
-    <div className="card shadow-sm mt-4 mb-4">
-      <div className="card-body">
-        <h5 className="card-title text-primary mb-3">Suggested Habits</h5>
-        <div className="d-flex flex-wrap gap-2">
-          {allSuggestions.map((suggestion, index) => (
-            <button
-              key={index}
-              className="btn btn-outline-success btn-sm"
-              onClick={() => addHabit(suggestion)}
-            >
-              {suggestion.name}
-            </button>
-          ))}
-        </div>
+    <div className="modern-card p-4 rounded-4 mb-5 border-dashed fade-in">
+      <div className="d-flex align-items-center mb-3">
+        <i className="bi bi-lightbulb-fill text-warning me-2 fs-5"></i>
+        <h5 className="fw-bold mb-0">Need Inspiration?</h5>
+      </div>
+      <p className="text-muted small mb-3">Single click to add any of these popular habits to your list.</p>
+      
+      <div className="d-flex flex-wrap gap-2">
+        {allSuggestions.map((suggestion, index) => (
+          <div
+            key={index}
+            className="chip chip-success bg-white shadow-sm"
+            onClick={() => addHabit(suggestion)}
+          >
+            <i className="bi bi-plus-circle me-2 opacity-50"></i>
+            {suggestion.name}
+          </div>
+        ))}
       </div>
     </div>
   );
