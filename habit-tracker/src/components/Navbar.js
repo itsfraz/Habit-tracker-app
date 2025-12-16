@@ -66,14 +66,6 @@ const Navbar = ({ currentUser, logOut, toggleTheme, theme }) => {
                     Login
                   </Link>
                 </li>
-                <li className="nav-item ms-lg-2">
-                  <Link 
-                    to="/register" 
-                    className="btn btn-primary btn-sm px-4 rounded-pill shadow-sm"
-                  >
-                    Get Started
-                  </Link>
-                </li>
               </>
             )}
           </ul>
