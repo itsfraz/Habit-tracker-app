@@ -94,13 +94,13 @@ const AddHabitForm = ({ addHabit, categories, customSuggestedHabits }) => {
               className="form-select form-select-lg border-light bg-light fw-medium text-dark px-3"
               id="habitCategory"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => setCategory(parseInt(e.target.value))}
               required
               style={{ borderRadius: '12px' }}
             >
               <option value="">Select Category...</option>
               {categories.map((cat) => (
-                <option key={cat.id} value={cat.name}>
+                <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>
               ))}

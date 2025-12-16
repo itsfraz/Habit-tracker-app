@@ -379,6 +379,7 @@ const App = () => {
                     customSuggestedHabits={customSuggestedHabits}
                     addCustomSuggestedHabit={addCustomSuggestedHabit}
                     removeCustomSuggestedHabit={removeCustomSuggestedHabit}
+                    theme={theme}
                   />
                 )}
               </PrivateRoute>
