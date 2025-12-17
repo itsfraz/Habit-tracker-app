@@ -7,8 +7,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // CORS Configuration - SIMPLIFY FOR NOW
+// CORS Configuration - SIMPLIFY FOR NOW
 app.use(cors({
-   origin: ['https://habit-tracker-app-frontend-habit-tracker.onrender.com', 'http://localhost:3000'],
+   origin: ['https://habit-tracker-app-frontend-habit-tracker.onrender.com', 'http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));

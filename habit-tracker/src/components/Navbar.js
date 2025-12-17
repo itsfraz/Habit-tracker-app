@@ -1,16 +1,26 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar = ({ currentUser, logOut, toggleTheme, theme }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleBrandClick = (e) => {
+    e.preventDefault();
+    if (currentUser) {
+      navigate('/tracker');
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
     <nav className={`navbar navbar-expand-lg sticky-top navbar-glass mb-4 ${theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
       <div className="container">
-        <Link className="navbar-brand d-flex align-items-center" to="/">
+        <a className="navbar-brand d-flex align-items-center" href="/" onClick={handleBrandClick}>
           <i className="bi bi-check-circle-fill me-2 text-primary"></i>
           Habit Tracker
-        </Link>
+        </a>
         
         <button 
           className="navbar-toggler border-0" 

@@ -11,7 +11,7 @@ const HabitList = ({ habits, deleteHabit, trackHabit, categories, addNote, setRe
 
   const habitsByCategory = filteredCategories.map((category) => ({
     ...category,
-    habits: habits.filter((habit) => habit.category === category.name),
+    habits: habits.filter((habit) => habit.category === category.name || String(habit.category) === String(category.id)),
   })).filter(cat => selectedCategory !== 'All' || cat.habits.length > 0); // Hide empty categories only if showing 'All'
 
   return (

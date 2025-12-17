@@ -50,7 +50,14 @@ const Analytics = ({ habits, categories, earnedBadges = [], theme = 'light' }) =
   // calculateHabitSuccessRate moved outside component as it is pure
 
   const calculateCategorySuccessRate = useCallback((categoryName) => {
-    const habitsInCategory = habits.filter(habit => habit.category === categoryName);
+    // Match by name OR id (assuming categoryName passed here is the Name from the categories array)
+    const categoryObj = categories.find(c => c.name === categoryName);
+    const categoryId = categoryObj ? categoryObj.id : null;
+
+    const habitsInCategory = habits.filter(habit => {
+        return habit.category === categoryName || (categoryId && String(habit.category) === String(categoryId));
+    });
+    
     if (habitsInCategory.length === 0) return 0;
     const totalRate = habitsInCategory.reduce((sum, h) => sum + calculateHabitSuccessRate(h), 0);
     return totalRate / habitsInCategory.length;
@@ -65,7 +72,8 @@ const Analytics = ({ habits, categories, earnedBadges = [], theme = 'light' }) =
     
     // Create gradient-like colors or category-based colors
     const bgColors = habits.map(h => {
-       const cat = categories.find(c => c.name === h.category);
+       // Match by Name OR ID
+       const cat = categories.find(c => c.name === h.category || String(c.id) === String(h.category));
        return cat ? cat.color : '#0d6efd';
     });
 
@@ -125,7 +133,9 @@ const Analytics = ({ habits, categories, earnedBadges = [], theme = 'light' }) =
   // 2. Pie Chart: Category Success Comparison
   const pieChartData = useMemo(() => {
      // Filter out categories with no habits for cleaner chart
-     const activeCategories = categories.filter(c => habits.some(h => h.category === c.name));
+     const activeCategories = categories.filter(c => {
+         return habits.some(h => h.category === c.name || String(h.category) === String(c.id));
+     });
      
      const labels = activeCategories.map(c => c.name);
      const data = activeCategories.map(c => calculateCategorySuccessRate(c.name));
