@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,32 +25,36 @@ ChartJS.register(
   ArcElement
 );
 
+// --- Calculation Helper (Pure Function) ---
+const calculateHabitSuccessRate = (habit) => {
+  if (!habit.history || habit.history.length === 0) return 0;
+  
+  let totalPossible = 0;
+  let actual = 0;
+  
+  // Consider last 30 days for "Current Success Rate" to be more relevant
+  // or just use all history as before. Let's stick to all history for consistency.
+  habit.history.forEach(entry => {
+    totalPossible += habit.targetCompletions;
+    actual += Math.min(entry.completions, habit.targetCompletions);
+  });
+
+  return totalPossible === 0 ? 0 : (actual / totalPossible) * 100;
+};
+
 const Analytics = ({ habits, categories, earnedBadges = [], theme = 'light' }) => {
   const isDark = theme === 'dark';
 
   // --- Calculation Helpers ---
-  const calculateHabitSuccessRate = (habit) => {
-    if (!habit.history || habit.history.length === 0) return 0;
-    
-    let totalPossible = 0;
-    let actual = 0;
-    
-    // Consider last 30 days for "Current Success Rate" to be more relevant
-    // or just use all history as before. Let's stick to all history for consistency.
-    habit.history.forEach(entry => {
-      totalPossible += habit.targetCompletions;
-      actual += Math.min(entry.completions, habit.targetCompletions);
-    });
+  // --- Calculation Helpers ---
+  // calculateHabitSuccessRate moved outside component as it is pure
 
-    return totalPossible === 0 ? 0 : (actual / totalPossible) * 100;
-  };
-
-  const calculateCategorySuccessRate = (categoryName) => {
+  const calculateCategorySuccessRate = useCallback((categoryName) => {
     const habitsInCategory = habits.filter(habit => habit.category === categoryName);
     if (habitsInCategory.length === 0) return 0;
     const totalRate = habitsInCategory.reduce((sum, h) => sum + calculateHabitSuccessRate(h), 0);
     return totalRate / habitsInCategory.length;
-  };
+  }, [habits]);
 
   // --- Chart Data Preparation ---
   
@@ -138,7 +142,7 @@ const Analytics = ({ habits, categories, earnedBadges = [], theme = 'light' }) =
          }
        ]
      };
-  }, [habits, categories, isDark]);
+  }, [habits, categories, isDark, calculateCategorySuccessRate]);
 
   const pieOptions = useMemo(() => ({
     responsive: true,

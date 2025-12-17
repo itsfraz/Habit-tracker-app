@@ -41,8 +41,7 @@ const StreakHeatmap = ({ habits, categories }) => {
     });
 
     const values = [];
-    const startDate = new Date(selectedYear, 0, 1);
-    const endDate = new Date(selectedYear, 11, 31);
+
     
     // We only strictly need values for valid dates, react-calendar-heatmap fills the rest with 'null' or empty.
     // However, pre-calculating makes it robust.

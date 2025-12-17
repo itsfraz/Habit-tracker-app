@@ -187,11 +187,7 @@ const DataManagement = ({ habits, categories, setHabits, customSuggestedHabits, 
     doc.save(`habit_report_${new Date().toISOString().slice(0,10)}.pdf`);
   };
 
-  const handlePrintReport = () => {
-     // Re-use logic or just redirect to PDF as it's better? 
-     // Let's make Print View open the PDF in new tab or keep existing logic but filtered.
-     exportToPDF(); // PDF is print-ready, simpler to unify.
-  };
+
 
   const addCustomSuggestedHabitHandler = () => {
     if (!newSuggestedHabitName.trim()) return;

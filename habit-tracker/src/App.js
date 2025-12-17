@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -42,6 +42,13 @@ const App = () => {
   const XP_PER_LEVEL = 100;
   const [currentUser, setCurrentUser] = useState(undefined);
 
+  const logOut = useCallback(() => {
+    authService.logout();
+    setCurrentUser(undefined);
+    setHabits([]);
+    navigate('/');
+  }, [navigate]);
+
   useEffect(() => {
     const user = authService.getCurrentUser();
     if (user && user.token) {
@@ -66,7 +73,7 @@ const App = () => {
         }
       });
     }
-  }, [currentUser]);
+  }, [currentUser, logOut]);
 
 
   const allBadges = [
@@ -274,12 +281,7 @@ const App = () => {
     setCustomSuggestedHabits(prev => prev.filter((_, i) => i !== index));
   };
 
-  const logOut = () => {
-    authService.logout();
-    setCurrentUser(undefined);
-    setHabits([]);
-    navigate('/');
-  };
+
 
   return (
       <div className={`container-fluid py-4 ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
