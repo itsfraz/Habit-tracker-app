@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 5000;
 
 // CORS Configuration - SIMPLIFY FOR NOW
 app.use(cors({
-  origin: ['https://habit-tracker-front.netlify.app', 'http://localhost:3000', 'http://localhost:3001'],
+   origin: ['https://habit-tracker-app-frontend-habit-tracker.onrender.com', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
