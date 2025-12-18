@@ -61,7 +61,7 @@ const Analytics = ({ habits, categories, earnedBadges = [], theme = 'light' }) =
     if (habitsInCategory.length === 0) return 0;
     const totalRate = habitsInCategory.reduce((sum, h) => sum + calculateHabitSuccessRate(h), 0);
     return totalRate / habitsInCategory.length;
-  }, [habits]);
+  }, [habits, categories]);
 
   // --- Chart Data Preparation ---
   
