@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = (process.env.REACT_APP_SERVER_URL || 'http://localhost:5000') + '/api/auth';
 
 // Create a separate Axios instance for auth requests
 const authApi = axios.create({
