@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import HabitList from './HabitList';
+import CommandCenter from './CommandCenter';
 
 const Dashboard = ({ habits, categories, deleteHabit, trackHabit, addNote, user, setReminder, theme }) => {
   const isDark = theme === 'dark';
@@ -118,6 +119,7 @@ const Dashboard = ({ habits, categories, deleteHabit, trackHabit, addNote, user,
       <div className="row g-4">
         {/* --- Main Action Column --- */}
         <div className="col-lg-8">
+            <CommandCenter habits={habits} trackHabit={trackHabit} addNote={addNote} />
             <div className={`section-container ${isDark ? 'text-white' : ''}`}>
                <div className="d-flex align-items-center justify-content-between mb-4 ps-2 border-start border-4 border-primary">
                   <h4 className="section-title mb-0 fw-bold">Today's Focus</h4>

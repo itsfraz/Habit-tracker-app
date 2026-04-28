@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-const Navbar = ({ currentUser, logOut, toggleTheme, theme }) => {
+const Navbar = ({ currentUser, logOut, toggleTheme, theme, lowMotion, toggleLowMotion }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ const Navbar = ({ currentUser, logOut, toggleTheme, theme }) => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto align-items-center">
             {/* Theme Toggle Button */}
-            <li className="nav-item me-lg-3">
+            <li className="nav-item me-2">
               <button 
                 className="btn btn-link nav-link p-0 d-flex align-items-center" 
                 onClick={toggleTheme}
@@ -45,6 +45,19 @@ const Navbar = ({ currentUser, logOut, toggleTheme, theme }) => {
               >
                 <div className={`theme-toggle-icon rounded-circle p-2 d-flex align-items-center justify-content-center ${theme === 'light' ? 'bg-light text-warning' : 'bg-dark-subtle text-light'}`}>
                   <i className={`bi bi-${theme === 'light' ? 'sun-fill' : 'moon-stars-fill'} fs-5`}></i>
+                </div>
+              </button>
+            </li>
+
+            {/* Reduced Motion Toggle Button */}
+            <li className="nav-item me-lg-3">
+              <button 
+                className="btn btn-link nav-link p-0 d-flex align-items-center" 
+                onClick={toggleLowMotion}
+                title={`Toggle Reduced Motion (Currently: ${lowMotion ? 'On' : 'Off'})`}
+              >
+                <div className={`theme-toggle-icon rounded-circle p-2 d-flex align-items-center justify-content-center ${lowMotion ? 'bg-info text-white' : 'bg-secondary text-white'}`}>
+                  <i className={`bi bi-${lowMotion ? 'wind' : 'hurricane'} fs-5`}></i>
                 </div>
               </button>
             </li>

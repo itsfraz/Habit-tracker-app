@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import HabitCalendar from './HabitCalendar';
 import ReminderSettings from './ReminderSettings';
 
@@ -121,7 +122,15 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
           </div>
           
           <div className="text-end ms-2 flex-shrink-0">
-            <h4 className="mb-0 fw-bold text-primary">{getStreak()}</h4>
+            <motion.h4 
+              key={getStreak()} 
+              initial={{ y: -10, opacity: 0, scale: 0.8 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="mb-0 fw-bold text-primary"
+            >
+              {getStreak()}
+            </motion.h4>
             <small className="text-muted text-uppercase fw-bold" style={{ fontSize: '0.65rem' }}>Streak</small>
           </div>
         </div>
@@ -133,15 +142,17 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
               <span className="text-muted small">{Math.round((completionsToday / habit.targetCompletions) * 100)}%</span>
            </div>
            
-           <div className="progress" style={{ height: '6px' }}>
-             <div 
+           <div className="progress" style={{ height: '6px', overflow: 'hidden' }}>
+             <motion.div 
                className="progress-bar bg-primary rounded-pill" 
                role="progressbar" 
-               style={{ width: `${Math.min((completionsToday / habit.targetCompletions) * 100, 100)}%` }}
+               initial={{ width: 0 }}
+               animate={{ width: `${Math.min((completionsToday / habit.targetCompletions) * 100, 100)}%` }}
+               transition={{ duration: 0.5, ease: "easeOut" }}
                aria-valuenow={completionsToday} 
                aria-valuemin="0" 
                aria-valuemax={habit.targetCompletions}
-             ></div>
+             ></motion.div>
            </div>
            <div className="d-flex justify-content-between mt-1">
              <span className="small fw-bold text-dark">{completionsToday} / {habit.targetCompletions}</span>
@@ -178,9 +189,11 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
               </button>
            </div>
 
-           <button
+           <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               className={`btn ${remainingCompletions <= 0 ? 'btn-success' : 'btn-primary'} rounded-pill px-3 py-1 fw-bold shadow-sm transition-all d-flex align-items-center justify-content-center`}
-              style={{ fontSize: '0.85rem', height: '36px' }}
+              style={{ fontSize: '0.85rem', height: '36px', overflow: 'hidden', position: 'relative' }}
               onClick={() => {
                 trackHabit(habit._id);
                 setIsAnimating(true);
@@ -188,17 +201,30 @@ const Habit = ({ habit, deleteHabit, trackHabit, addNote, categories, setReminde
               }}
               disabled={remainingCompletions <= 0}
             >
-              {remainingCompletions <= 0 ? (
-                <>
-                  <i className="bi bi-check-lg fs-6"></i>
-                </>
-              ) : (
-                <>
-                  <i className="bi bi-plus-lg me-1"></i>
-                  <span>Do It</span>
-                </>
-              )}
-            </button>
+              <AnimatePresence mode="wait">
+                {remainingCompletions <= 0 ? (
+                  <motion.div
+                    key="done"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                  >
+                    <i className="bi bi-check-lg fs-6"></i>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="doit"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    className="d-flex align-items-center"
+                  >
+                    <i className="bi bi-plus-lg me-1"></i>
+                    <span>Do It</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
         </div>
 
         {/* Collapsible Sections */}

@@ -13,6 +13,7 @@ import { Bar, Pie } from 'react-chartjs-2';
 import ProgressReports from './ProgressReports';
 import StreakHeatmap from './StreakHeatmap';
 import Badges from './Badges';
+import StoryAnalytics from './StoryAnalytics';
 
 // Register ChartJS
 ChartJS.register(
@@ -199,6 +200,9 @@ const Analytics = ({ habits, categories, earnedBadges = [], theme = 'light' }) =
             {habits.length} Active Habits
           </span>
        </div>
+
+       {/* Story Mode Analytics */}
+       <StoryAnalytics habits={habits} />
 
        {/* Charts Row */}
        <div className="row g-4 mb-4">

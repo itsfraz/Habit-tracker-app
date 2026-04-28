@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { MotionConfig } from 'framer-motion';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -39,6 +40,7 @@ const App = () => {
   const [level, setLevel] = useState(1);
   const [xp, setXp] = useState(0);
   const [customSuggestedHabits, setCustomSuggestedHabits] = useState([]);
+  const [lowMotion, setLowMotion] = useState(false);
   const XP_PER_LEVEL = 100;
   const [currentUser, setCurrentUser] = useState(undefined);
 
@@ -125,8 +127,10 @@ const App = () => {
     }
     const storedLevel = parseInt(localStorage.getItem('level')) || 1;
     const storedXp = parseInt(localStorage.getItem('xp')) || 0;
+    const storedLowMotion = localStorage.getItem('lowMotion') === 'true';
     setLevel(storedLevel);
     setXp(storedXp);
+    setLowMotion(storedLowMotion);
 
     const storedCustomSuggestions = JSON.parse(localStorage.getItem('customSuggestedHabits'));
     if (storedCustomSuggestions) {
@@ -148,6 +152,7 @@ const App = () => {
     localStorage.setItem('theme', theme);
     localStorage.setItem('level', level);
     localStorage.setItem('xp', xp);
+    localStorage.setItem('lowMotion', lowMotion);
     localStorage.setItem('customSuggestedHabits', JSON.stringify(customSuggestedHabits));
     document.body.className = theme === 'dark' ? 'bg-dark text-white' : '';
 
@@ -271,6 +276,10 @@ const App = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
+  const toggleLowMotion = () => {
+    setLowMotion(!lowMotion);
+  };
+
   const addCustomSuggestedHabit = (habitName) => {
     if (habitName.trim() !== '') {
       setCustomSuggestedHabits(prev => [...prev, { name: habitName.trim(), category: 'Uncategorized', frequency: 'daily' }]);
@@ -284,8 +293,9 @@ const App = () => {
 
 
   return (
+    <MotionConfig reducedMotion={lowMotion ? "always" : "user"}>
       <div className={`container-fluid py-4 ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
-        <Navbar currentUser={currentUser} logOut={logOut} toggleTheme={toggleTheme} theme={theme} />
+        <Navbar currentUser={currentUser} logOut={logOut} toggleTheme={toggleTheme} theme={theme} lowMotion={lowMotion} toggleLowMotion={toggleLowMotion} />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
@@ -390,6 +400,7 @@ const App = () => {
         </Routes>
         <Footer />
       </div>
+    </MotionConfig>
   );
 };
 
