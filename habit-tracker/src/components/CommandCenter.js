@@ -17,7 +17,6 @@ const CommandCenter = ({ habits, trackHabit, addNote }) => {
     return habits.map(habit => {
       let score = 0;
       let reasons = [];
-      let streak = 0;
 
       // Calculate streak and check if yesterday was done
       const history = habit.history || [];
@@ -65,6 +64,7 @@ const CommandCenter = ({ habits, trackHabit, addNote }) => {
       return { habit, score, currentStreak, reasons, doneToday: false };
     }).filter(item => !item.doneToday && !snoozedIds.has(item.habit._id))
       .sort((a, b) => b.score - a.score);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- yesterday is re-created every render, so adding it triggers infinite loops
   }, [habits, snoozedIds, todayStr, yesterdayStr]);
 
   const topHabits = scoredHabits.slice(0, 3);

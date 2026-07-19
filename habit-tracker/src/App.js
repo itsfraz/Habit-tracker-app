@@ -207,7 +207,7 @@ const App = () => {
         }
       }
     });
-  }, [habits, theme, level, xp, customSuggestedHabits, setReminder]);
+  }, [habits, theme, level, xp, customSuggestedHabits, setReminder, lowMotion]);
 
   const addHabit = (habit) => {
     habitService.addHabit(habit).then(res => {
